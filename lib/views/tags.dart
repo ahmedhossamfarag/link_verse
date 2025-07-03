@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:link_verse/views/components/button.dart';
+import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
 
@@ -49,6 +50,8 @@ class _TagsViewState extends State<TagsView> {
     return PaddingLayout(
       child: Column(
         children: [
+          const XHeadingText('Select Your Tags', fontSize: 18),
+          const SizedBox(height: 16),
           XTextField(
             onChanged: _onSearchChanged,
             placeholder: 'Search Tags',

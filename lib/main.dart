@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/firebase_options.dart';
+import 'package:link_verse/views/collections.dart';
+import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/start.dart';
+import 'package:link_verse/views/tags.dart';
 
 void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -34,7 +37,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartView(),
+      home: const HomeView(),
     );
   }
 }

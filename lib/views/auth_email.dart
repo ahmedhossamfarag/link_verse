@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/views/components/button.dart';
+import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/components/logo.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
@@ -45,15 +46,10 @@ class _AuthEmailState extends State<AuthEmail> {
       child: Column(
         children: [
           const XLogo(),
-          const Text(
+          const XHeadingText(
             'SingUp or SingIn',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
+            fontSize: 18,
             ),
-          ),
           const SizedBox(height: 16),
           XTextField(
             onChanged: _onEmailChanged,
