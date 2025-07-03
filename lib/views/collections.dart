@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/models/collection.dart';
 
-class CollectionsView extends StatelessWidget {
+class ActionHandler {
+  void Function()? actionHandler;
+
+  void handler() {
+    if (actionHandler != null) {
+      actionHandler!();
+    }
+  }
+}
+
+class CollectionsView extends StatefulWidget {
   final String? title = 'Collections';
   final IconData? actionIcon = Icons.add;
-  const CollectionsView({super.key});
+  final ActionHandler? actionHandler;
+
+  CollectionsView({super.key}) : actionHandler = ActionHandler();
+
+  @override
+  State<StatefulWidget> createState() {
+    return _CollectionsViewState();
+  }
+}
+
+class _CollectionsViewState extends State<CollectionsView> {
+  List<Collection> collections = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize collections or fetch from a service
+    collections = createCollections();
+    widget.actionHandler?.actionHandler = addCollection;
+  }
 
   void addCollection() {
     // Logic to add a new collection
@@ -11,6 +41,57 @@ class CollectionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Collections View'));
+    return Column(
+      children: [
+        for (var i = 0; i < collections.length; i += 2)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CollectionCard(collection: collections[i]),
+              if (i + 1 < collections.length)
+                CollectionCard(collection: collections[i + 1]),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+class CollectionCard extends StatelessWidget {
+  final Collection collection;
+
+  const CollectionCard({super.key, required this.collection});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.0),
+            child: Image.network(
+              collection.imageUrl,
+              height: 122,
+              width: 136,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(height: 12),
+          Text(
+            collection.name,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFF7F2F2),
+            ),
+          ),
+          Text(
+            '${collection.noItems} saved items',
+            style: TextStyle(fontSize: 12, color: Color(0xFFBDE8F7)),
+          ),
+        ],
+      ),
+    );
   }
 }

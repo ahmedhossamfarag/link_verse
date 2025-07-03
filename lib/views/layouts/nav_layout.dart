@@ -49,11 +49,11 @@ class _NavLayoutState extends State<NavLayout> {
     }
     switch (selectedIndex) {
       case 0:
-        const view = CollectionsView();
+        var view = CollectionsView();
         body = view;
         title = view.title;
         actionIcon = view.actionIcon;
-        actionHandler = view.addCollection;
+        actionHandler = view.actionHandler?.handler;
         break;
       case 1:
         body = SearchView();
@@ -102,7 +102,7 @@ class _NavLayoutState extends State<NavLayout> {
               ],
             )
           : null,
-      body: body,
+      body: Padding(padding: const EdgeInsets.all(16), child: body),
       backgroundColor: Color(0xFF4999B6),
       bottomNavigationBar: NavigationBar(
         backgroundColor: Color(0xFF00BAFD),

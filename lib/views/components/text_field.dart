@@ -7,12 +7,14 @@ class XTextField extends StatelessWidget{
   final String? error;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final TextEditingController? controller;
 
-  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false});
+  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false, this.controller});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        controller: controller,
         onChanged: onChanged,
         decoration: InputDecoration(
             label: Text(placeholder),
