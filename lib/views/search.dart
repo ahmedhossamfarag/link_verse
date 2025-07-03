@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/models/bookmark.dart';
+import 'package:link_verse/views/bookmarks.dart';
+import 'package:link_verse/views/components/loading.dart';
+import 'package:link_verse/views/components/no_content.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 
@@ -15,6 +19,7 @@ class _SearchViewState extends State<SearchView> {
   String query = '';
   List<String> history = [];
   List<String> tags = [];
+  List<Bookmark>? bookmarks;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -52,9 +57,7 @@ class _SearchViewState extends State<SearchView> {
   void Function() _setQuery(String item) {
     return () {
       _searchController.text = item;
-      setState(() {
-        query = item;
-      });
+      _onQueryChanged(item);
     };
   }
 
@@ -102,6 +105,16 @@ class _SearchViewState extends State<SearchView> {
                   .toList(),
             ),
           ],
+          if (query.isNotEmpty)
+            bookmarks == null
+                ? const XLoading()
+                : bookmarks!.isEmpty
+                ? XNoContent(image: 'assets/main/no-results.gif')
+                : Column(
+                    children: bookmarks!
+                        .map((bookmark) => BookmarkView(bookmark))
+                        .toList(),
+                  ),
         ],
       ),
     );

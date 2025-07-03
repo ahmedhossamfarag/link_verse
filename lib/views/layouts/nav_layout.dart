@@ -41,6 +41,7 @@ class _NavLayoutState extends State<NavLayout> {
     title = widget.title;
     actionIcon = widget.actionIcon;
     actionHandler = widget.actionHandler;
+    body = widget.body;
   }
 
   void _setBody() {

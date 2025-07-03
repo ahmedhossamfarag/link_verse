@@ -1,4 +1,5 @@
 import 'package:link_verse/models/collection.dart';
+import 'package:link_verse/models/comment.dart';
 import 'package:link_verse/models/user.dart';
 
 class Bookmark {
@@ -12,6 +13,7 @@ class Bookmark {
   final String summary;
   final int noLikes;
   final int noComments;
+  final List<Comment> comments;
   final Collection collection;
   final User user;
   final DateTime createdAt;
@@ -27,6 +29,7 @@ class Bookmark {
     required this.summary,
     this.noLikes = 0,
     this.noComments = 0,
+    this.comments = const [],
     required this.collection,
     required this.user,
     required this.createdAt,
@@ -88,6 +91,8 @@ Bookmark createBookmark() {
       'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png'
     ],
     summary: 'This is a sample summary of the bookmark.',
+    noComments: 2,
+    comments: createComments(),
     collection: createCollection(),
     user: createUser(),
     createdAt: DateTime.now(),

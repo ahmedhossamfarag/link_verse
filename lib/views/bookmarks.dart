@@ -1,42 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:link_verse/models/bookmark.dart';
+import 'package:link_verse/models/collection.dart';
+import 'package:link_verse/views/layouts/nav_layout.dart';
+import 'package:link_verse/views/new_bookmark.dart';
 import 'package:link_verse/views/bookmark.dart' as bookmark_view;
 
-class LikesView extends StatefulWidget {
-  final String title = "Favorites";
-  const LikesView({super.key});
+class BookmarksView extends StatefulWidget {
+  final Collection collection;
+  const BookmarksView({super.key, required this.collection});
 
   @override
   State<StatefulWidget> createState() {
-    return _LikesViewState();
+    return _BookmarksViewState();
   }
 }
 
-class _LikesViewState extends State<LikesView> {
+class _BookmarksViewState extends State<BookmarksView> {
   List<Bookmark> bookmarks = [];
 
   @override
   void initState() {
     super.initState();
-    // Initialize bookmarks or fetch from a service
+    // Load bookmarks from storage or database
     bookmarks = createBookmarks();
   }
 
-  void _onDeleteBookmark(Bookmark bookmark) {
-    // Remove the bookmark from the list
-    // In a real application, you might also want to remove it from a database or service
-    setState(() {
-      bookmarks.remove(bookmark);
-    });
+  void _addBookmark() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewBookmarkView(collection: widget.collection),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: bookmarks
-            .map((bookmark) => BookmarkView(bookmark, _onDeleteBookmark))
-            .toList(),
+    return NavLayout(
+      selectedIndex: 0,
+      title: "Bookmarks",
+      actionIcon: Icons.add,
+      actionHandler: _addBookmark,
+      body: Column(
+        children: bookmarks.map((bookmark) => BookmarkView(bookmark)).toList(),
       ),
     );
   }
@@ -44,9 +50,8 @@ class _LikesViewState extends State<LikesView> {
 
 class BookmarkView extends StatelessWidget {
   final Bookmark bookmark;
-  final void Function(Bookmark) onDelete;
 
-  const BookmarkView(this.bookmark, this.onDelete, {super.key});
+  const BookmarkView(this.bookmark, {super.key});
 
   void _openBookmark(BuildContext context) {
     Navigator.push(
@@ -59,23 +64,26 @@ class BookmarkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      color: const Color(0xFF0C4D5E),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              bookmark.imageUrl,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        _openBookmark(context);
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        color: const Color(0xFF0C4D5E),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                bookmark.imageUrl,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: GestureDetector(
+            const SizedBox(width: 10),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -117,20 +125,9 @@ class BookmarkView extends StatelessWidget {
                   ),
                 ],
               ),
-              onTap: () => _openBookmark(context),
             ),
-          ),
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {
-                  onDelete(bookmark);
-                },
-                icon: Icon(Icons.delete, color: Colors.white),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

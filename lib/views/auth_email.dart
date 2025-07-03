@@ -5,9 +5,6 @@ import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/components/logo.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
-import 'package:link_verse/views/sign_up.dart';
-import 'package:link_verse/views/sing_in.dart';
-import 'package:link_verse/views/tags.dart';
 
 class AuthEmail extends StatefulWidget {
   const AuthEmail({super.key});
