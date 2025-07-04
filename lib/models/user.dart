@@ -12,6 +12,27 @@ class User {
     this.avatar,
     this.favoriteTags = const [],
   });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      email: json['email'] as String,
+      avatar: json['avatar'] as String?,
+      favoriteTags: List<String>.from(json['favoriteTags'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'avatar': avatar,
+      'favoriteTags': favoriteTags,
+    };
+  }
+
 }
 
 User createUser() {

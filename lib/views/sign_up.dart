@@ -1,31 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/auth.dart';
+import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/logo.dart';
+import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text_field.dart';
+import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
 
 class SignUpView extends StatefulWidget {
-  const SignUpView({super.key});
+  final String email;
+  const SignUpView({super.key, required this.email});
 
   @override
   State<SignUpView> createState() => _SignUpViewState();
 }
 
 class _SignUpViewState extends State<SignUpView> {
+  String name = '';
+  String password = '';
+  String confirmPassword = '';
+
+  String? nameError;
+  String? passwordError;
+  String? confirmPasswordError;
+
   void _nameChanged(String value) {
-    // Handle email change
+    name = value;
   }
 
   void _passwordChanged(String value) {
-    // Handle password change
+    password = value;
   }
 
   void _confirmPasswordChanged(String value) {
-    // Handle confirm password change
+    confirmPassword = value;
   }
 
   void _signUp() {
-    // Handle sign up logic
+    var nameError = nameValidator(name);
+    var passwordError = passwordValidator(password);
+    var confirmPasswordError = confirmPasswordValidator(confirmPassword, password);
+    setState(() {
+      this.nameError = nameError;
+      this.passwordError = passwordError;
+      this.confirmPasswordError = confirmPasswordError;
+    });
+    if (nameError == null && passwordError == null && confirmPasswordError == null) {
+      final overlayEnrty = showLoadingOverlay(context);
+      singUpUser(name, widget.email, password, (ok, message){
+        overlayEnrty.remove();
+        if (ok) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+        }else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message!)));
+        }
+      });
+    }
   }
 
   @override
@@ -39,6 +70,7 @@ class _SignUpViewState extends State<SignUpView> {
             onChanged: _nameChanged,
             placeholder: "Name",
             prefixIcon: Icons.person,
+            error: nameError,
           ),
           const SizedBox(height: 8),
           XTextField(
@@ -46,6 +78,7 @@ class _SignUpViewState extends State<SignUpView> {
             placeholder: "Password",
             obscureText: true,
             prefixIcon: Icons.lock,
+            error: passwordError,
           ),
           const SizedBox(height: 8),
           XTextField(
@@ -53,6 +86,7 @@ class _SignUpViewState extends State<SignUpView> {
             placeholder: "Confirm Password",
             obscureText: true,
             prefixIcon: Icons.lock,
+            error: confirmPasswordError,
           ),
           const SizedBox(height: 8),
           XButton(onPressed: _signUp, child: const Text("Sign Up")),

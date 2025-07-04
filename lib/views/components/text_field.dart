@@ -10,7 +10,7 @@ class XTextField extends StatelessWidget{
   final TextEditingController? controller;
   final int? maxLines;
 
-  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false, this.controller, this.maxLines});
+  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false, this.controller, this.maxLines = 1});
 
   @override
   Widget build(BuildContext context) {

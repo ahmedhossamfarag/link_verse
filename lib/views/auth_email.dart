@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/auth.dart';
 import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/views/components/button.dart';
+import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/components/logo.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
+import 'package:link_verse/views/sign_up.dart';
+import 'package:link_verse/views/sing_in.dart';
 
 class AuthEmail extends StatefulWidget {
   const AuthEmail({super.key});
@@ -30,12 +34,26 @@ class _AuthEmailState extends State<AuthEmail> {
         this.error = error;
       });
     }
-    if (error == null) {}
+    if (error == null) {
+      final loading = showLoadingOverlay(context);
+      checkEmailExist(email!, (exist){
+        loading.remove();
+        if (exist) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => SignInView(email: email!)));
+        }else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpView(email: email!)));
+        }
+      });
+    }
   }
 
-  void _continueWithGoogle() {}
+  void _continueWithGoogle() {
+    signInUserViaGoogle((ok){});
+  }
 
-  void _continueWithGithub() {}
+  void _continueWithGithub() {
+    signInUserViaGithub((ok){});
+  }
 
   @override
   Widget build(BuildContext context) {
