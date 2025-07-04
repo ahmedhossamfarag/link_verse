@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> checkEmailExist(String email, Function(bool) callback) async {
   final db = FirebaseFirestore.instance;
@@ -61,10 +61,95 @@ Future<void> singInUserViaEmail(
   }
 }
 
-Future<void> signInUserViaGoogle(Function(bool) callback) async {}
+Future<void> signInUserViaGoogle(
+  Function(bool, {String? message}) callback,
+) async {
+  try {
+    UserCredential userCredential;
 
-Future<void> signInUserViaGithub(Function(bool) callback) async {}
+    if (kIsWeb) {
+      userCredential = await FirebaseAuth.instance.signInWithPopup(
+        GoogleAuthProvider(),
+      );
+    } else {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+    }
+
+    await checkEmailExist(userCredential.user!.email!, (exist) async {
+      if (exist) {
+        callback(true);
+      } else {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .set({
+              'name': userCredential.user!.displayName,
+              'email': userCredential.user!.email,
+              'avatar': userCredential.user!.photoURL,
+            });
+        callback(false);
+      }
+    });
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'account-exists-with-different-credential') {
+      callback(false, message: 'Account exists with different credential');
+    } else if (e.code == 'invalid-credential') {
+      callback(false, message: 'Invalid credential');
+    } else {
+      callback(false, message: 'Unexpected error: ${e.code}');
+    }
+  }
+}
+
+Future<void> signInUserViaGithub(
+  Function(bool, {String? message}) callback,
+) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithPopup(
+      GithubAuthProvider(),
+    );
+    await checkEmailExist(userCredential.user!.email!, (exist) async {
+      if (exist) {
+        callback(true);
+      } else {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .set({
+              'name': userCredential.user!.displayName,
+              'email': userCredential.user!.email,
+              'avatar': userCredential.user!.photoURL,
+            });
+        callback(false);
+      }
+    });
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'account-exists-with-different-credential') {
+      callback(false, message: 'Account exists with different credential');
+    } else if (e.code == 'invalid-credential') {
+      callback(false, message: 'Invalid credential');
+    } else {
+      callback(false, message: 'Unexpected error: ${e.code}');
+    }
+  }
+}
 
 Future<void> singOutUser() async {
   await FirebaseAuth.instance.signOut();
+}
+
+User? getCurrentUser() {
+  return FirebaseAuth.instance.currentUser;
 }

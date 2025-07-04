@@ -1,12 +1,12 @@
 class User {
-  final String id;
+  final String? id;
   final String name;
   final String email;
   final String? avatar;
   final List<String> favoriteTags;
 
   User({
-    required this.id,
+    this.id,
     required this.name,
     required this.email,
     this.avatar,
@@ -15,7 +15,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       name: json['name'] as String,
       email: json['email'] as String,
       avatar: json['avatar'] as String?,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/profile.dart';
 import 'package:link_verse/models/user.dart';
 import 'package:link_verse/views/components/text.dart';
 
@@ -17,8 +18,12 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-    // Initialize user or fetch from a service
     user = createUser();
+    getCurrentUserProfile((user) {
+      setState(() {
+        this.user = user;
+      });
+    });
   }
 
   @override
@@ -30,7 +35,7 @@ class _ProfileViewState extends State<ProfileView> {
           children: [
             ClipOval(
               child: Image.network(
-                user.avatar ?? 'https://via.placeholder.com/150',
+                user.avatar ?? 'https://www.gravatar.com/avatar/placeholder?s=200&d=mp',
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,

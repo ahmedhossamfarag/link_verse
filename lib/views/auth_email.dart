@@ -6,9 +6,11 @@ import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/components/logo.dart';
+import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
 import 'package:link_verse/views/sign_up.dart';
 import 'package:link_verse/views/sing_in.dart';
+import 'package:link_verse/views/tags.dart';
 
 class AuthEmail extends StatefulWidget {
   const AuthEmail({super.key});
@@ -48,11 +50,33 @@ class _AuthEmailState extends State<AuthEmail> {
   }
 
   void _continueWithGoogle() {
-    signInUserViaGoogle((ok){});
+    final loading = showLoadingOverlay(context);
+    signInUserViaGoogle((exist, {message}){
+      loading.remove();
+      if (message != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        return;
+      }
+      if (exist) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+      }else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => TagsView()));
+      }
+    });
   }
 
   void _continueWithGithub() {
-    signInUserViaGithub((ok){});
+    signInUserViaGithub((exist, {message}){
+      if (message != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        return;
+      }
+      if (exist) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+      }else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => TagsView()));
+      }
+    });
   }
 
   @override

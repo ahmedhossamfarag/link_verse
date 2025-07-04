@@ -5,8 +5,8 @@ import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/logo.dart';
 import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text_field.dart';
-import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
+import 'package:link_verse/views/tags.dart';
 
 class SignUpView extends StatefulWidget {
   final String email;
@@ -51,7 +51,7 @@ class _SignUpViewState extends State<SignUpView> {
       singUpUser(name, widget.email, password, (ok, message){
         overlayEnrty.remove();
         if (ok) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const TagsView()));
         }else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message!)));
         }

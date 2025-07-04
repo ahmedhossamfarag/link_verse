@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:link_verse/firebase_options.dart';
+import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/start.dart';
 
 void main() async {
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (kIsWeb) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  }
   runApp(const MyApp());
 }
 
@@ -18,8 +23,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    Widget home;
+    if (user != null) {
+      home = HomeView();
+    } else {
+      home = StartView();
+    }
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Link Verse',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -38,10 +50,8 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      routes: {
-        '/start': (context) => StartView(),
-      },
-      home: StartView(),
+      routes: {'/start': (context) => StartView()},
+      home: home,
     );
   }
 }
