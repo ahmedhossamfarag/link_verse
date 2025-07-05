@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/bookmarks.dart';
+import 'package:link_verse/control/likes.dart';
 import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/models/comment.dart';
 import 'package:link_verse/views/components/button.dart';
@@ -19,6 +21,7 @@ class _BookmarkViewState extends State<BookmarkView> {
   late Bookmark bookmark;
   final Comment comment = Comment();
   bool canComment = true;
+  bool? isFavourite;
 
   final _commentController = TextEditingController();
 
@@ -31,6 +34,18 @@ class _BookmarkViewState extends State<BookmarkView> {
         bookmark.comments = value;
       }),
     );
+    isBookmarkLiked(bookmark).then((value) => setState(() => isFavourite = value));
+  }
+
+  void _toogleFavourite() {
+    if (isFavourite == null) return;
+    bool prev = isFavourite!;
+    isFavourite = null;
+    if (!prev) {
+      addBookmarkLike(bookmark).then((_) => setState(() => isFavourite = true));
+    } else {
+      removeBookmarkLike(bookmark).then((_) => setState(() => isFavourite = false));
+    }
   }
 
   void _showMessage(String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
@@ -70,6 +85,12 @@ class _BookmarkViewState extends State<BookmarkView> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(isFavourite == true ? Icons.favorite : Icons.favorite_border),
+            onPressed: isFavourite == null ? null : _toogleFavourite,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -81,11 +102,13 @@ class _BookmarkViewState extends State<BookmarkView> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      bookmark.imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: bookmark.imageUrl,
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -153,13 +176,15 @@ class _BookmarkViewState extends State<BookmarkView> {
                           .map(
                             (image) => ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                bookmark.imageUrls.isNotEmpty
+                              child: CachedNetworkImage(
+                                imageUrl: bookmark.imageUrls.isNotEmpty
                                     ? bookmark.imageUrls[0]
                                     : bookmark.imageUrl,
                                 width: double.infinity,
                                 height: 200,
                                 fit: BoxFit.cover,
+                                placeholder: (context, url) => const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
                               ),
                             ),
                           )
@@ -251,11 +276,12 @@ class CommentView extends StatelessWidget {
             children: [
               comment.user!.avatar != null
                   ? ClipOval(
-                      child: Image.network(
-                        comment.user!.avatar!,
+                      child: CachedNetworkImage(
+                        imageUrl: comment.user!.avatar!,
                         width: 20,
                         height: 20,
                         color: Colors.white,
+                        errorWidget: (context, url, error) => const Icon(Icons.person),
                       ),
                     )
                   : Icon(Icons.person, color: Colors.white, size: 20),

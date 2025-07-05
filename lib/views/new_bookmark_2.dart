@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/bookmarks.dart';
 import 'package:link_verse/control/validators.dart';
@@ -122,11 +123,13 @@ class _NewBookmark2ViewState extends State<NewBookmark2View> {
                         children: bookmark!.imageUrls.map((image) {
                           return Stack(
                             children: [
-                              Image.network(
-                                image,
+                              CachedNetworkImage(
+                                imageUrl: image,
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
+                                placeholder: (context, url) => const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
                               ),
                               Positioned(
                                 right: 0,

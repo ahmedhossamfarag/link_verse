@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/explore.dart';
 import 'package:link_verse/models/bookmark.dart';
 
 class ExploreView extends StatefulWidget {
@@ -11,20 +13,23 @@ class ExploreView extends StatefulWidget {
 }
 
 class _ExploreViewState extends State<ExploreView> {
-  List<Bookmark> bookmarks = [];
+  List<Bookmark>? bookmarks;
 
   @override
   void initState() {
     super.initState();
     // Initialize bookmarks or fetch from a service
-    bookmarks = createBookmarks();
+    getExploreBookmarks().then((value) => setState(() => bookmarks = value));
   }
 
   @override
   Widget build(BuildContext context) {
+    if (bookmarks == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return SingleChildScrollView(
       child: Column(
-        children: bookmarks.map((bookmark) => BookmarkView(bookmark)).toList(),
+        children: bookmarks!.map((bookmark) => BookmarkView(bookmark)).toList(),
       ),
     );
   }
@@ -46,11 +51,13 @@ class BookmarkView extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  bookmark.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: bookmark.imageUrl,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
               const SizedBox(width: 10),
@@ -113,13 +120,15 @@ class BookmarkView extends StatelessWidget {
                 const SizedBox(height: 10),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    bookmark.imageUrls.isNotEmpty
+                  child: CachedNetworkImage(
+                    imageUrl: bookmark.imageUrls.isNotEmpty
                         ? bookmark.imageUrls[0]
                         : bookmark.imageUrl,
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ],

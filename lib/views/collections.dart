@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/collections.dart';
 import 'package:link_verse/models/collection.dart';
@@ -91,11 +92,13 @@ class CollectionCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
-              child: Image.network(
-                collection.imageUrl,
+              child: CachedNetworkImage(
+                imageUrl:  collection.imageUrl,
                 height: 122,
                 width: 136,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             SizedBox(height: 12),

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:link_verse/control/auth.dart';
+import 'package:link_verse/control/search.dart';
+import 'package:link_verse/control/tags.dart';
 import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/models/collection.dart';
 import 'package:link_verse/models/comment.dart';
@@ -7,13 +9,16 @@ import 'package:link_verse/models/user.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> createBookmarkDoc(Bookmark bookmark) async {
-  await FirebaseFirestore.instance
+  final doc = await FirebaseFirestore.instance
       .collection('bookmarks')
       .add(bookmark.toJson());
   await FirebaseFirestore.instance
       .collection('collections')
       .doc(bookmark.collection!.id)
       .update({'noItems': FieldValue.increment(1)});
+  bookmark.id = doc.id;
+  algoliaSaveBookmark(bookmark);
+  addTags(bookmark.tags);
 }
 
 Future<List<Bookmark>> getBookmarks(Collection collection) async {
@@ -24,6 +29,14 @@ Future<List<Bookmark>> getBookmarks(Collection collection) async {
   return snapshot.docs
       .map((doc) => Bookmark.fromJson(doc.id, doc.data()))
       .toList();
+}
+
+Future<Bookmark> getBookmark(String id) async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('bookmarks')
+      .doc(id)
+      .get();
+  return Bookmark.fromJson(snapshot.id, snapshot.data()!);
 }
 
 Future<List<Comment>> getBookmarkComments(Bookmark bookmark) async {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/bookmarks.dart';
 import 'package:link_verse/models/bookmark.dart';
@@ -24,7 +25,9 @@ class _BookmarksViewState extends State<BookmarksView> {
   void initState() {
     super.initState();
     // Load bookmarks from storage or database
-    getBookmarks(widget.collection).then((value) => setState(() => bookmarks = value));
+    getBookmarks(
+      widget.collection,
+    ).then((value) => setState(() => bookmarks = value));
   }
 
   void _addBookmark() {
@@ -47,9 +50,15 @@ class _BookmarksViewState extends State<BookmarksView> {
       title: "Bookmarks",
       actionIcon: Icons.add,
       actionHandler: _addBookmark,
-      body: bookmarks!.isEmpty ? const XNoContent() : Column(
-        children: bookmarks!.map((bookmark) => BookmarkView(bookmark)).toList(),
-      ),
+      body: bookmarks!.isEmpty
+          ? const XNoContent()
+          : SingleChildScrollView(
+              child: Column(
+                children: bookmarks!
+                    .map((bookmark) => BookmarkView(bookmark))
+                    .toList(),
+              ),
+            ),
     );
   }
 }
@@ -81,11 +90,14 @@ class BookmarkView extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                bookmark.imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: bookmark.imageUrl,
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             const SizedBox(width: 10),

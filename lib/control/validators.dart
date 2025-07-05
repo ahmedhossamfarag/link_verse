@@ -103,6 +103,9 @@ String? tagValidator(String? value, List<String> tags) {
   if (tags.contains(value)) {
     return 'Tag already exists';
   }
+  if (value.contains("'") || value.contains('"')) {
+    return 'Tag cannot contain quotes';
+  }
   return null;
 }
 

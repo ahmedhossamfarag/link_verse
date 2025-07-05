@@ -1,7 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/profile.dart';
+import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/models/user.dart';
+import 'package:link_verse/views/components/overlay_input.dart';
 import 'package:link_verse/views/components/text.dart';
+import 'package:link_verse/views/tags.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -26,6 +30,39 @@ class _ProfileViewState extends State<ProfileView> {
     });
   }
 
+  void _editAvatar() {
+    XOverlayInput(
+      context,
+      placeholder: 'Avatar URL',
+      validator: uRlValidator,
+      callback: (value) {
+        updateUserAvatar(
+          value,
+        ).then((_) => setState(() => user.avatar = value));
+      },
+    );
+  }
+
+  void _editName() {
+    XOverlayInput(
+      context,
+      placeholder: 'Name',
+      validator: nameValidator,
+      callback: (value) {
+        updateUserName(value).then((_) => setState(() => user.name = value));
+      },
+    );
+  }
+
+  void _editTags() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TagsView(tags: user.favoriteTags),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,11 +71,14 @@ class _ProfileViewState extends State<ProfileView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ClipOval(
-              child: Image.network(
-                user.avatar ?? 'https://www.gravatar.com/avatar/placeholder?s=200&d=mp',
+              child: CachedNetworkImage(
+                imageUrl: user.avatar ??
+                    'https://www.gravatar.com/avatar/placeholder?s=200&d=mp',
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.person, size: 100,),
               ),
             ),
             Container(
@@ -86,10 +126,4 @@ class _ProfileViewState extends State<ProfileView> {
       ],
     );
   }
-
-  void _editAvatar() {}
-
-  void _editName() {}
-
-  void _editTags() {}
 }

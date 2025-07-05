@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:link_verse/control/profile.dart';
+import 'package:link_verse/control/tags.dart';
 import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 import 'package:link_verse/views/home.dart';
+import 'package:link_verse/views/layouts/nav_layout.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
 
 class TagsView extends StatefulWidget {
@@ -37,6 +39,7 @@ class _TagsViewState extends State<TagsView> {
       'Business',
     ];
     selectedTags = widget.tags ?? [];
+    getTags().then((value) => setState(() => tags.addAll(value)));
   }
 
   void _onSearchChanged(String value) {
@@ -50,7 +53,7 @@ class _TagsViewState extends State<TagsView> {
 
   void _exit(){
     if(widget.tags != null){
-      Navigator.pop(context, selectedTags);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NavLayout(selectedIndex: 4,)));
     }
     else{
       Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));

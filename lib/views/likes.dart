@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/likes.dart';
 import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/views/bookmark.dart' as bookmark_view;
+import 'package:link_verse/views/components/no_content.dart';
 
 class LikesView extends StatefulWidget {
   final String title = "Favorites";
@@ -13,30 +16,36 @@ class LikesView extends StatefulWidget {
 }
 
 class _LikesViewState extends State<LikesView> {
-  List<Bookmark> bookmarks = [];
+  List<Bookmark>? bookmarks;
 
   @override
   void initState() {
     super.initState();
     // Initialize bookmarks or fetch from a service
-    bookmarks = createBookmarks();
+    getLikedBookmarks().then((value) => setState(() => bookmarks = value));
   }
 
   void _onDeleteBookmark(Bookmark bookmark) {
     // Remove the bookmark from the list
     // In a real application, you might also want to remove it from a database or service
     setState(() {
-      bookmarks.remove(bookmark);
+      bookmarks?.remove(bookmark);
     });
+    removeBookmarkLike(bookmark);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (bookmarks == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return SingleChildScrollView(
       child: Column(
-        children: bookmarks
-            .map((bookmark) => BookmarkView(bookmark, _onDeleteBookmark))
-            .toList(),
+        children: bookmarks!.isEmpty
+            ? [const XNoContent()]
+            : bookmarks!
+                  .map((bookmark) => BookmarkView(bookmark, _onDeleteBookmark))
+                  .toList(),
       ),
     );
   }
@@ -66,11 +75,13 @@ class BookmarkView extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              bookmark.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: bookmark.imageUrl,
               width: 100,
               height: 100,
               fit: BoxFit.cover,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           const SizedBox(width: 10),

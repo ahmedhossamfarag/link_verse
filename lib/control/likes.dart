@@ -9,7 +9,7 @@ Future<void> addBookmarkLike(Bookmark bookmark) async {
       .collection('users')
       .doc(user.uid)
       .collection('bookmarks')
-      .add({'id': bookmark.id});
+      .doc(bookmark.id).set({});
   await FirebaseFirestore.instance
       .collection('bookmarks')
       .doc(bookmark.id)
@@ -34,4 +34,31 @@ Future<List<Bookmark>> getLikedBookmarks() async {
     bookmarks.add(Bookmark.fromJson(doc.id, bookmark.data()!));
   }
   return bookmarks;
+}
+
+Future<bool> isBookmarkLiked(Bookmark bookmark) async {
+  final user = getCurrentUser();
+  if (user == null) return false;
+  final snapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('bookmarks')
+      .doc(bookmark.id)
+      .get();
+  return snapshot.exists;
+}
+
+Future<void> removeBookmarkLike(Bookmark bookmark) async {
+  final user = getCurrentUser();
+  if (user == null) return;
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('bookmarks')
+      .doc(bookmark.id)
+      .delete();
+  await FirebaseFirestore.instance
+      .collection('bookmarks')
+      .doc(bookmark.id)
+      .update({'likes': FieldValue.increment(-1)});
 }
