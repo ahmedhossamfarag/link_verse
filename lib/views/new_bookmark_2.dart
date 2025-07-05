@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/bookmarks.dart';
+import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/models/bookmark.dart';
+import 'package:link_verse/views/bookmarks.dart';
 import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/loading.dart';
+import 'package:link_verse/views/components/overlay_input.dart';
+import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 
@@ -22,23 +27,52 @@ class _NewBookmark2ViewState extends State<NewBookmark2View> {
   @override
   void initState() {
     super.initState();
-    // bookmark = widget.bookmark;
-    bookmark = createBookmark();
+    bookmark = widget.bookmark;
+    bookmark?.tags = [];
+    bookmark?.imageUrls = [];
   }
 
-  void _changeSummary(String value) {}
+  void _changeSummary(String value) {
+    bookmark?.summary = value;
+  }
 
   void _addTag() {
-    // Handle tag addition logic here
+    XOverlayInput(
+      context,
+      placeholder: 'Tag',
+      validator: (tag) => tagValidator(tag, bookmark?.tags ?? []),
+      callback: (value) {
+        setState(() {
+          bookmark?.tags.add(value);
+        });
+      },
+    );
   }
 
   void _addImage() {
-    // Handle image addition logic here
+    XOverlayInput(
+      context,
+      placeholder: 'Image URL',
+      validator: (url) => imageValidator(url, bookmark?.imageUrls ?? []),
+      callback: (value) {
+        setState(() {
+          bookmark?.imageUrls.add(value);
+        });
+      },
+    );
+  }
+
+  void _exit() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksView(collection: (bookmark?.collection)!,)));
   }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Handle form submission logic here
+      final loading = showLoadingOverlay(context);
+      createBookmarkDoc(bookmark!).then((value){
+        loading.remove();
+        _exit();
+      });
     }
   }
 

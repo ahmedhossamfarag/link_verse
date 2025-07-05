@@ -3,37 +3,74 @@ import 'package:link_verse/models/comment.dart';
 import 'package:link_verse/models/user.dart';
 
 class Bookmark {
-  final String id;
-  final String title;
-  final String description;
-  final String url;
-  final String imageUrl;
-  final List<String> tags;
-  final List<String> imageUrls;
-  final String summary;
-  final int noLikes;
-  final int noComments;
-  final List<Comment> comments;
-  final Collection collection;
-  final User user;
-  final DateTime createdAt;
+  String id;
+  String title;
+  String description;
+  String url;
+  String imageUrl;
+  List<String> tags;
+  List<String> imageUrls;
+  String summary;
+  int noLikes;
+  int noComments;
+  List<Comment> comments;
+  Collection? collection;
+  User? user;
+  DateTime? createdAt;
 
   Bookmark({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.url,
-    required this.imageUrl,
-    required this.tags,
-    required this.imageUrls,
-    required this.summary,
+    this.id = '',
+    this.title = '',
+    this.description = '',
+    this.url = '',
+    this.imageUrl = '',
+    this.tags = const [],
+    this.imageUrls = const [],
+    this.summary = '',
     this.noLikes = 0,
     this.noComments = 0,
     this.comments = const [],
-    required this.collection,
-    required this.user,
-    required this.createdAt,
-  });
+    this.collection,
+    this.user,
+    this.createdAt,
+  }){
+    createdAt ??= DateTime.now();
+  }
+
+  factory Bookmark.fromJson(String id, Map<String, dynamic> json) {
+    return Bookmark(
+      id: id,
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      url: json['url'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      tags: List<String>.from(json['tags'] ?? []),
+      imageUrls: List<String>.from(json['imageUrls'] ?? []),
+      summary: json['summary'] ?? '',
+      noLikes: json['noLikes'] ?? 0,
+      noComments: json['noComments'] ?? 0,
+      collection: Collection(id: json['collection'] ?? ''),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'url': url,
+      'imageUrl': imageUrl,
+      'tags': tags,
+      'imageUrls': imageUrls,
+      'summary': summary,
+      'noLikes': noLikes,
+      'noComments': noComments,
+      'collection': collection?.id,
+      'createdAt': createdAt?.toIso8601String(),
+    };
+  }
 }
 
 List<Bookmark> createBookmarks() {
@@ -50,12 +87,11 @@ List<Bookmark> createBookmarks() {
       tags: ['sample', 'bookmark'],
       imageUrls: [
         'https://cdn.pixabay.com/photo/2016/09/08/04/12/programmer-1653351_1280.png',
-        'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png'
+        'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png',
       ],
       summary: 'This is a sample summary of the bookmark.',
       collection: collection,
       user: user,
-      createdAt: DateTime.now(),
     ),
     Bookmark(
       id: '67890',
@@ -67,12 +103,11 @@ List<Bookmark> createBookmarks() {
       tags: ['another', 'bookmark'],
       imageUrls: [
         'https://cdn.pixabay.com/photo/2016/09/08/04/12/programmer-1653351_1280.png',
-        'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png'
+        'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png',
       ],
       summary: 'This is another sample summary of the bookmark.',
       collection: collection,
       user: user,
-      createdAt: DateTime.now(),
     ),
   ];
 }
@@ -88,13 +123,11 @@ Bookmark createBookmark() {
     tags: ['sample', 'bookmark'],
     imageUrls: [
       'https://cdn.pixabay.com/photo/2016/09/08/04/12/programmer-1653351_1280.png',
-      'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png'
+      'https://cdn.pixabay.com/photo/2023/07/04/19/43/man-8106958_1280.png',
     ],
     summary: 'This is a sample summary of the bookmark.',
-    noComments: 2,
     comments: createComments(),
     collection: createCollection(),
     user: createUser(),
-    createdAt: DateTime.now(),
   );
 }

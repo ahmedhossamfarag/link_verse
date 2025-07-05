@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/profile.dart';
 import 'package:link_verse/control/validators.dart';
+import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/models/collection.dart';
 import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/text_field.dart';
+import 'package:link_verse/views/new_bookmark_2.dart';
 
 class NewBookmarkView extends StatefulWidget {
   final Collection collection;
@@ -15,23 +18,35 @@ class NewBookmarkView extends StatefulWidget {
 }
 
 class _NewBookmarkViewState extends State<NewBookmarkView> {
+  late Bookmark bookmark;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    bookmark = Bookmark(collection: widget.collection);
+    getCurrentUserProfile((user) => bookmark.user = user);
+  }
+
   void _changeTitle(String value) {
-    // Handle title change
+    bookmark.title = value;
   }
 
   void _changeDescription(String value) {
-    // Handle description change
+    bookmark.description = value;
   }
 
   void _changeUrl(String value) {
-    // Handle URL change
+    bookmark.url = value;
+  }
+
+  void _changeImageUrl(String value) {
+    bookmark.imageUrl = value;
   }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Handle form submission logic here
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NewBookmark2View(bookmark: bookmark)));
     }
   }
 
@@ -75,11 +90,15 @@ class _NewBookmarkViewState extends State<NewBookmarkView> {
                 prefixIcon: Icons.link,
                 validator: uRlValidator,
               ),
-              const Expanded(child: SizedBox(),),
-              XButton(
-                onPressed: _submitForm,
-                child: const Text('Continue'),
+              const SizedBox(height: 16.0),
+              XTextField(
+                onChanged: _changeImageUrl,
+                placeholder: 'Image URL',
+                prefixIcon: Icons.image,
+                validator: uRlValidator,
               ),
+              const Expanded(child: SizedBox()),
+              XButton(onPressed: _submitForm, child: const Text('Continue')),
             ],
           ),
         ),

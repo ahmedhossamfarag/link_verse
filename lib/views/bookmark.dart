@@ -1,23 +1,63 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/bookmarks.dart';
 import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/models/comment.dart';
 import 'package:link_verse/views/components/button.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
 
-class BookmarkView extends StatelessWidget {
+class BookmarkView extends StatefulWidget {
   final Bookmark bookmark;
+  const BookmarkView(this.bookmark, {super.key});
+
+  @override
+  State<BookmarkView> createState() => _BookmarkViewState();
+}
+
+class _BookmarkViewState extends State<BookmarkView> {
+  late Bookmark bookmark;
+  final Comment comment = Comment();
+  bool canComment = true;
 
   final _commentController = TextEditingController();
 
-  BookmarkView(this.bookmark, {super.key});
+  @override
+  void initState() {
+    super.initState();
+    bookmark = widget.bookmark;
+    getBookmarkComments(bookmark).then(
+      (value) => setState(() {
+        bookmark.comments = value;
+      }),
+    );
+  }
 
-  void _openBookmark() {}
+  void _showMessage(String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 
-  void _changeComment(String p1) {}
+  void _openBookmark() {
+    openBookmark(bookmark).then(_showMessage);
+  }
 
-  void _addComment() {}
+  void _changeComment(String value) {
+    comment.content = value;
+  }
+
+  void _addComment() {
+    if (comment.content.isEmpty) return;
+    setState(() {
+      canComment = false;
+    });
+    comment.createdAt = DateTime.now();
+    addBookmarkComment(bookmark, comment).then((_) {
+      _commentController.clear();
+      setState(() {
+        bookmark.comments.add(comment);
+        bookmark.noComments++;
+        canComment = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,10 +196,11 @@ class BookmarkView extends StatelessWidget {
                       placeholder: 'Add a comment',
                       maxLines: 3,
                       controller: _commentController,
+                      enabled: canComment,
                     ),
                     const SizedBox(height: 10),
                     XButton(
-                      onPressed: _addComment,
+                      onPressed: canComment ? _addComment : null,
                       child: const Text('Add Comment'),
                     ),
                   ],
@@ -208,10 +249,10 @@ class CommentView extends StatelessWidget {
         children: [
           Row(
             children: [
-              comment.user.avatar != null
+              comment.user!.avatar != null
                   ? ClipOval(
                       child: Image.network(
-                        comment.user.avatar!,
+                        comment.user!.avatar!,
                         width: 20,
                         height: 20,
                         color: Colors.white,
@@ -220,7 +261,7 @@ class CommentView extends StatelessWidget {
                   : Icon(Icons.person, color: Colors.white, size: 20),
               const SizedBox(width: 5),
               Text(
-                comment.user.name,
+                comment.user!.name,
                 style: const TextStyle(fontSize: 14, color: Colors.white),
               ),
             ],

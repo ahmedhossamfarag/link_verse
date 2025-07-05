@@ -1,36 +1,26 @@
 class User {
-  final String? id;
-  final String name;
-  final String email;
-  final String? avatar;
-  final List<String> favoriteTags;
+  String id;
+  String name;
+  String email;
+  String? avatar;
+  List<String> favoriteTags;
 
   User({
-    this.id,
-    required this.name,
-    required this.email,
+    this.id = '',
+    this.name = '',
+    this.email = '',
     this.avatar,
     this.favoriteTags = const [],
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(String id, Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String?,
+      id: id,
       name: json['name'] as String,
       email: json['email'] as String,
       avatar: json['avatar'] as String?,
       favoriteTags: List<String>.from(json['favoriteTags'] ?? []),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'avatar': avatar,
-      'favoriteTags': favoriteTags,
-    };
   }
 
 }

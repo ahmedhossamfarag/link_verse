@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/collections.dart';
 import 'package:link_verse/control/validators.dart';
+import 'package:link_verse/models/collection.dart';
 import 'package:link_verse/views/components/button.dart';
+import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text_field.dart';
+import 'package:link_verse/views/layouts/nav_layout.dart';
 
 class NewCollectionView extends StatefulWidget {
   const NewCollectionView({super.key});
@@ -13,15 +17,32 @@ class NewCollectionView extends StatefulWidget {
 }
 
 class _NewCollectionViewState extends State<NewCollectionView> {
+  Collection collection = Collection();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _changeName(String p1) {}
+  void _changeName(String value) {
+    collection.name = value;
+  }
 
-  void _changeDescription(String p1) {}
+  void _changeDescription(String value) {
+    collection.description = value;
+  }
+
+  void _changeImageUrl(String value) {
+    collection.imageUrl = value;
+  }
+
+  void _exit(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const NavLayout(selectedIndex: 0,)));
+  }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Handle form submission logic here
+      final loading = showLoadingOverlay(context);
+      createCollectionDoc(collection).then((value){
+        loading.remove();
+        _exit();
+      });
     }
   }
 
@@ -57,6 +78,13 @@ class _NewCollectionViewState extends State<NewCollectionView> {
                 prefixIcon: Icons.description,
                 validator: descriptionValidator,
                 maxLines: 3,
+              ),
+              const SizedBox(height: 16.0),
+              XTextField(
+                onChanged: _changeImageUrl,
+                placeholder: 'Image URL',
+                prefixIcon: Icons.image,
+                validator: uRlValidator,
               ),
               Expanded(child: SizedBox()),
               XButton(

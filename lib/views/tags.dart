@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/profile.dart';
 import 'package:link_verse/views/components/button.dart';
+import 'package:link_verse/views/components/overlay_loading.dart';
 import 'package:link_verse/views/components/text.dart';
 import 'package:link_verse/views/components/text_field.dart';
+import 'package:link_verse/views/home.dart';
 import 'package:link_verse/views/layouts/padding_layout.dart';
 
 class TagsView extends StatefulWidget {
-  const TagsView({super.key});
+  final List<String>? tags;
+  const TagsView({super.key, this.tags});
 
   @override
   State<TagsView> createState() => _TagsViewState();
@@ -16,17 +20,6 @@ class _TagsViewState extends State<TagsView> {
   List<String> filteredTags = [];
   String searchQuery = '';
   List<String> selectedTags = [];
-
-  void _onSearchChanged(String value) {
-    setState(() {
-      searchQuery = value.toLowerCase();
-      filteredTags = tags
-          .where((tag) => tag.toLowerCase().contains(searchQuery))
-          .toList();
-    });
-  }
-
-  void _saveTags() {}
 
   @override
   void initState() {
@@ -43,6 +36,33 @@ class _TagsViewState extends State<TagsView> {
       'Lifestyle',
       'Business',
     ];
+    selectedTags = widget.tags ?? [];
+  }
+
+  void _onSearchChanged(String value) {
+    setState(() {
+      searchQuery = value.toLowerCase();
+      filteredTags = tags
+          .where((tag) => tag.toLowerCase().contains(searchQuery))
+          .toList();
+    });
+  }
+
+  void _exit(){
+    if(widget.tags != null){
+      Navigator.pop(context, selectedTags);
+    }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+    }
+  }
+
+  void _saveTags() {
+    final loading = showLoadingOverlay(context);
+    updateUserTags(selectedTags).then((value){
+      loading.remove();
+      _exit();
+    });
   }
 
   @override

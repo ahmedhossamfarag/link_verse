@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/collections.dart';
 import 'package:link_verse/models/collection.dart';
 import 'package:link_verse/views/bookmarks.dart';
+import 'package:link_verse/views/components/no_content.dart';
 import 'package:link_verse/views/new_collection.dart';
 
 class ActionHandler {
@@ -27,14 +29,14 @@ class CollectionsView extends StatefulWidget {
 }
 
 class _CollectionsViewState extends State<CollectionsView> {
-  List<Collection> collections = [];
+  List<Collection>? collections;
 
   @override
   void initState() {
     super.initState();
     // Initialize collections or fetch from a service
-    collections = createCollections();
     widget.actionHandler?.actionHandler = addCollection;
+    getCollections().then((value) => setState(() => collections = value));
   }
 
   void addCollection() {
@@ -48,15 +50,18 @@ class _CollectionsViewState extends State<CollectionsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    if (collections == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return collections!.isEmpty ? const XNoContent() :  Column(
       children: [
-        for (var i = 0; i < collections.length; i += 2)
+        for (var i = 0; i < collections!.length; i += 2)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CollectionCard(collection: collections[i], context: context),
-              if (i + 1 < collections.length)
-                CollectionCard(collection: collections[i + 1], context: context),
+              CollectionCard(collection: collections![i], context: context),
+              if (i + 1 < collections!.length)
+                CollectionCard(collection: collections![i + 1], context: context),
             ],
           ),
       ],

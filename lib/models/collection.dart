@@ -6,12 +6,32 @@ class Collection {
   int noItems;
 
   Collection({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.noItems,
+    this.id = '',
+    this.name = '',
+    this.description = '',
+    this.imageUrl = '',
+    this.noItems = 0,
   });
+
+  
+  factory Collection.fromJson(String id, Map<String, dynamic> json) {
+    return Collection(
+      id: id,
+      name: json['name'],
+      description: json['description'],
+      imageUrl: json['imageUrl'],
+      noItems: json['noItems'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'imageUrl': imageUrl,
+      'noItems': noItems,
+    };
+  }
 }
 
 List<Collection> createCollections() {

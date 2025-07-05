@@ -89,3 +89,26 @@ String? uRlValidator(String? value) {
   }
   return null;
 }
+
+String? tagValidator(String? value, List<String> tags) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter a tag';
+  }
+  if (value.length < 3) {
+    return 'Tag must be at least 3 characters long';
+  }
+  if (value.length > 20) {
+    return 'Tag must be less than 20 characters';
+  }
+  if (tags.contains(value)) {
+    return 'Tag already exists';
+  }
+  return null;
+}
+
+String? imageValidator(String? value, List<String> imageUrls) {
+  if (value != null && imageUrls.contains(value)) {
+    return 'Image already exists';
+  }
+  return uRlValidator(value);
+}

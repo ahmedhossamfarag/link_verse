@@ -9,7 +9,7 @@ Future<void> getCurrentUserProfile(Function(User) callback) async {
         .collection('users')
         .doc(user.uid)
         .get();
-    callback(User.fromJson(snapshot.data()!));
+    callback(User.fromJson(snapshot.id, snapshot.data()!));
   }
 }
 
@@ -21,6 +21,16 @@ Future<void> updateUserName(String name) async {
         .collection('users')
         .doc(user.uid)
         .update({'name': name});
+  }
+}
+
+Future<void> updateUserAvatar(String avatar) async {
+  final user = getCurrentUser();
+  if (user != null) {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({'avatar': avatar});
   }
 }
 

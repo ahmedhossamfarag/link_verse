@@ -9,8 +9,9 @@ class XTextField extends StatelessWidget{
   final bool obscureText;
   final TextEditingController? controller;
   final int? maxLines;
+  final bool? enabled;
 
-  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false, this.controller, this.maxLines = 1});
+  const XTextField({super.key, required this.onChanged, required this.placeholder, this.prefixIcon, this.error, this.validator, this.obscureText = false, this.controller, this.maxLines = 1, this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class XTextField extends StatelessWidget{
       validator: validator,
       obscureText: obscureText,
       maxLines: maxLines,
+      enabled: enabled
     );
   }
 

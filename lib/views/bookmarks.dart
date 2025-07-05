@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/bookmarks.dart';
 import 'package:link_verse/models/bookmark.dart';
 import 'package:link_verse/models/collection.dart';
+import 'package:link_verse/views/components/no_content.dart';
 import 'package:link_verse/views/layouts/nav_layout.dart';
 import 'package:link_verse/views/new_bookmark.dart';
 import 'package:link_verse/views/bookmark.dart' as bookmark_view;
@@ -16,13 +18,13 @@ class BookmarksView extends StatefulWidget {
 }
 
 class _BookmarksViewState extends State<BookmarksView> {
-  List<Bookmark> bookmarks = [];
+  List<Bookmark>? bookmarks;
 
   @override
   void initState() {
     super.initState();
     // Load bookmarks from storage or database
-    bookmarks = createBookmarks();
+    getBookmarks(widget.collection).then((value) => setState(() => bookmarks = value));
   }
 
   void _addBookmark() {
@@ -36,13 +38,17 @@ class _BookmarksViewState extends State<BookmarksView> {
 
   @override
   Widget build(BuildContext context) {
+    if (bookmarks == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return NavLayout(
+      key: UniqueKey(),
       selectedIndex: 0,
       title: "Bookmarks",
       actionIcon: Icons.add,
       actionHandler: _addBookmark,
-      body: Column(
-        children: bookmarks.map((bookmark) => BookmarkView(bookmark)).toList(),
+      body: bookmarks!.isEmpty ? const XNoContent() : Column(
+        children: bookmarks!.map((bookmark) => BookmarkView(bookmark)).toList(),
       ),
     );
   }
