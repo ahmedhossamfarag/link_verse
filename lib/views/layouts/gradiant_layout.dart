@@ -8,6 +8,7 @@ class GradiantLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF4999B6),
       body: DecoratedBox(
         decoration: const BoxDecoration(
             gradient:

@@ -40,20 +40,30 @@ class _SignUpViewState extends State<SignUpView> {
   void _signUp() {
     var nameError = nameValidator(name);
     var passwordError = passwordValidator(password);
-    var confirmPasswordError = confirmPasswordValidator(confirmPassword, password);
+    var confirmPasswordError = confirmPasswordValidator(
+      confirmPassword,
+      password,
+    );
     setState(() {
       this.nameError = nameError;
       this.passwordError = passwordError;
       this.confirmPasswordError = confirmPasswordError;
     });
-    if (nameError == null && passwordError == null && confirmPasswordError == null) {
+    if (nameError == null &&
+        passwordError == null &&
+        confirmPasswordError == null) {
       final overlayEnrty = showLoadingOverlay(context);
-      singUpUser(name, widget.email, password, (ok, message){
+      singUpUser(name, widget.email, password, (ok, message) {
         overlayEnrty.remove();
         if (ok) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const TagsView()));
-        }else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message!)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TagsView()),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message!)));
         }
       });
     }
@@ -62,35 +72,37 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return PaddingLayout(
-      child: Column(
-        children: [
-          const XLogo(),
-          const SizedBox(height: 20),
-          XTextField(
-            onChanged: _nameChanged,
-            placeholder: "Name",
-            prefixIcon: Icons.person,
-            error: nameError,
-          ),
-          const SizedBox(height: 8),
-          XTextField(
-            onChanged: _passwordChanged,
-            placeholder: "Password",
-            obscureText: true,
-            prefixIcon: Icons.lock,
-            error: passwordError,
-          ),
-          const SizedBox(height: 8),
-          XTextField(
-            onChanged: _confirmPasswordChanged,
-            placeholder: "Confirm Password",
-            obscureText: true,
-            prefixIcon: Icons.lock,
-            error: confirmPasswordError,
-          ),
-          const SizedBox(height: 8),
-          XButton(onPressed: _signUp, child: const Text("Sign Up")),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const XLogo(),
+            const SizedBox(height: 20),
+            XTextField(
+              onChanged: _nameChanged,
+              placeholder: "Name",
+              prefixIcon: Icons.person,
+              error: nameError,
+            ),
+            const SizedBox(height: 8),
+            XTextField(
+              onChanged: _passwordChanged,
+              placeholder: "Password",
+              obscureText: true,
+              prefixIcon: Icons.lock,
+              error: passwordError,
+            ),
+            const SizedBox(height: 8),
+            XTextField(
+              onChanged: _confirmPasswordChanged,
+              placeholder: "Confirm Password",
+              obscureText: true,
+              prefixIcon: Icons.lock,
+              error: confirmPasswordError,
+            ),
+            const SizedBox(height: 8),
+            XButton(onPressed: _signUp, child: const Text("Sign Up")),
+          ],
+        ),
       ),
     );
   }

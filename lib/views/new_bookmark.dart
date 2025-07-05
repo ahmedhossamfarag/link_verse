@@ -46,7 +46,12 @@ class _NewBookmarkViewState extends State<NewBookmarkView> {
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => NewBookmark2View(bookmark: bookmark)));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NewBookmark2View(bookmark: bookmark),
+        ),
+      );
     }
   }
 
@@ -63,43 +68,45 @@ class _NewBookmarkViewState extends State<NewBookmarkView> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              XTextField(
-                onChanged: _changeTitle,
-                placeholder: 'Title',
-                prefixIcon: Icons.title,
-                validator: titleValidator,
-              ),
-              const SizedBox(height: 16.0),
-              XTextField(
-                onChanged: _changeDescription,
-                placeholder: 'Description',
-                prefixIcon: Icons.description,
-                validator: descriptionValidator,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16.0),
-              XTextField(
-                onChanged: _changeUrl,
-                placeholder: 'URL',
-                prefixIcon: Icons.link,
-                validator: uRlValidator,
-              ),
-              const SizedBox(height: 16.0),
-              XTextField(
-                onChanged: _changeImageUrl,
-                placeholder: 'Image URL',
-                prefixIcon: Icons.image,
-                validator: uRlValidator,
-              ),
-              const Expanded(child: SizedBox()),
-              XButton(onPressed: _submitForm, child: const Text('Continue')),
-            ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                XTextField(
+                  onChanged: _changeTitle,
+                  placeholder: 'Title',
+                  prefixIcon: Icons.title,
+                  validator: titleValidator,
+                ),
+                const SizedBox(height: 16.0),
+                XTextField(
+                  onChanged: _changeDescription,
+                  placeholder: 'Description',
+                  prefixIcon: Icons.description,
+                  validator: descriptionValidator,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16.0),
+                XTextField(
+                  onChanged: _changeUrl,
+                  placeholder: 'URL',
+                  prefixIcon: Icons.link,
+                  validator: uRlValidator,
+                ),
+                const SizedBox(height: 16.0),
+                XTextField(
+                  onChanged: _changeImageUrl,
+                  placeholder: 'Image URL',
+                  prefixIcon: Icons.image,
+                  validator: uRlValidator,
+                ),
+                const SizedBox(height: 32.0),
+                XButton(onPressed: _submitForm, child: const Text('Continue')),
+              ],
+            ),
           ),
         ),
       ),

@@ -27,9 +27,14 @@ class _SignInViewState extends State<SignInView> {
     singInUserViaEmail(widget.email, password, (ok, {message}) {
       loading.remove();
       if (ok) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeView()),
+        );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message!)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message!)));
       }
     });
   }
@@ -37,19 +42,21 @@ class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
     return PaddingLayout(
-      child: Column(
-        children: [
-          const XLogo(),
-          const SizedBox(height: 20),
-          XTextField(
-            onChanged: _passwordChanged,
-            placeholder: "Password",
-            obscureText: true,
-            prefixIcon: Icons.lock,
-          ),
-          const SizedBox(height: 8),
-          XButton(onPressed: _signIn, child: const Text("Sign In")),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const XLogo(),
+            const SizedBox(height: 20),
+            XTextField(
+              onChanged: _passwordChanged,
+              placeholder: "Password",
+              obscureText: true,
+              prefixIcon: Icons.lock,
+            ),
+            const SizedBox(height: 8),
+            XButton(onPressed: _signIn, child: const Text("Sign In")),
+          ],
+        ),
       ),
     );
   }

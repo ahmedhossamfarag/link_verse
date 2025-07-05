@@ -60,6 +60,7 @@ class _SearchViewState extends State<SearchView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 32),
           XTextField(
             onChanged: _onQueryChanged,
             placeholder: 'Search...',

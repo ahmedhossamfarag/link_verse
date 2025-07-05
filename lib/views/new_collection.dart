@@ -32,14 +32,19 @@ class _NewCollectionViewState extends State<NewCollectionView> {
     collection.imageUrl = value;
   }
 
-  void _exit(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const NavLayout(selectedIndex: 0,)));
+  void _exit() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NavLayout(selectedIndex: 0),
+      ),
+    );
   }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final loading = showLoadingOverlay(context);
-      createCollectionDoc(collection).then((value){
+      createCollectionDoc(collection).then((value) {
         loading.remove();
         _exit();
       });
@@ -59,39 +64,41 @@ class _NewCollectionViewState extends State<NewCollectionView> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              XTextField(
-                onChanged: _changeName,
-                placeholder: 'Name',
-                prefixIcon: Icons.title,
-                validator: nameValidator,
-              ),
-              const SizedBox(height: 16.0),
-              XTextField(
-                onChanged: _changeDescription,
-                placeholder: 'Description',
-                prefixIcon: Icons.description,
-                validator: descriptionValidator,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16.0),
-              XTextField(
-                onChanged: _changeImageUrl,
-                placeholder: 'Image URL',
-                prefixIcon: Icons.image,
-                validator: uRlValidator,
-              ),
-              Expanded(child: SizedBox()),
-              XButton(
-                onPressed: _submitForm,
-                child: const Text('Create Collection'),
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                XTextField(
+                  onChanged: _changeName,
+                  placeholder: 'Name',
+                  prefixIcon: Icons.title,
+                  validator: nameValidator,
+                ),
+                const SizedBox(height: 16.0),
+                XTextField(
+                  onChanged: _changeDescription,
+                  placeholder: 'Description',
+                  prefixIcon: Icons.description,
+                  validator: descriptionValidator,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16.0),
+                XTextField(
+                  onChanged: _changeImageUrl,
+                  placeholder: 'Image URL',
+                  prefixIcon: Icons.image,
+                  validator: uRlValidator,
+                ),
+                const SizedBox(height: 32,),
+                XButton(
+                  onPressed: _submitForm,
+                  child: const Text('Create Collection'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

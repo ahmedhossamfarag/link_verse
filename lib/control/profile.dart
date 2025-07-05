@@ -9,7 +9,7 @@ Future<void> getCurrentUserProfile(Function(User) callback) async {
         .collection('users')
         .doc(user.uid)
         .get();
-    callback(User.fromJson(snapshot.id, snapshot.data()!));
+    callback(User.fromJson(snapshot.id, snapshot.data() ?? {}));
   }
 }
 
@@ -52,7 +52,7 @@ Future<List<String>> getUserTags() async {
         .collection('users')
         .doc(user.uid)
         .get();
-    return List<String>.from(snapshot.data()!['favoriteTags']);
+    return List<String>.from(snapshot.data()?['favoriteTags'] ?? []);
   }
   return [];
 }

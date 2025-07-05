@@ -38,12 +38,18 @@ class _AuthEmailState extends State<AuthEmail> {
     }
     if (error == null) {
       final loading = showLoadingOverlay(context);
-      checkEmailExist(email!, (exist){
+      checkEmailExist(email!, (exist) {
         loading.remove();
         if (exist) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SignInView(email: email!)));
-        }else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpView(email: email!)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignInView(email: email!)),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignUpView(email: email!)),
+          );
         }
       });
     }
@@ -51,30 +57,46 @@ class _AuthEmailState extends State<AuthEmail> {
 
   void _continueWithGoogle() {
     final loading = showLoadingOverlay(context);
-    signInUserViaGoogle((exist, {message}){
+    signInUserViaGoogle((exist, {message}) {
       loading.remove();
       if (message != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
         return;
       }
       if (exist) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
-      }else {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => TagsView()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeView()),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TagsView()),
+        );
       }
     });
   }
 
   void _continueWithGithub() {
-    signInUserViaGithub((exist, {message}){
+    signInUserViaGithub((exist, {message}) {
       if (message != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
         return;
       }
       if (exist) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeView()));
-      }else {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => TagsView()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeView()),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TagsView()),
+        );
       }
     });
   }
@@ -82,61 +104,60 @@ class _AuthEmailState extends State<AuthEmail> {
   @override
   Widget build(BuildContext context) {
     return PaddingLayout(
-      child: Column(
-        children: [
-          const XLogo(),
-          const XHeadingText(
-            'SingUp or SingIn',
-            fontSize: 18,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const XLogo(),
+            const XHeadingText('SingUp or SingIn', fontSize: 18),
+            const SizedBox(height: 16),
+            XTextField(
+              onChanged: _onEmailChanged,
+              placeholder: 'Email',
+              prefixIcon: Icons.email_outlined,
+              error: error,
             ),
-          const SizedBox(height: 16),
-          XTextField(
-            onChanged: _onEmailChanged,
-            placeholder: 'Email',
-            prefixIcon: Icons.email_outlined,
-            error: error,
-          ),
-          const SizedBox(height: 8),
-          XButton(onPressed: _continue, child: const Text('Continue')),
-          const SizedBox(height: 36),
-          XButton(
-            onPressed: _continueWithGoogle,
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/onboarding/google.png',
-                  width: 24,
-                  height: 24,
-                ),
-                const Expanded(
-                  child: Text(
-                    'Continue with Google',
-                    textAlign: TextAlign.center,
+            const SizedBox(height: 8),
+            XButton(onPressed: _continue, child: const Text('Continue')),
+            const SizedBox(height: 36),
+            XButton(
+              onPressed: _continueWithGoogle,
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/onboarding/google.png',
+                    width: 24,
+                    height: 24,
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          XButton(
-            onPressed: _continueWithGithub,
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/onboarding/github.png',
-                  width: 24,
-                  height: 24,
-                ),
-                const Expanded(
-                  child: Text(
-                    'Continue with Google',
-                    textAlign: TextAlign.center,
+                  const Expanded(
+                    child: Text(
+                      'Continue with Google',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            XButton(
+              onPressed: _continueWithGithub,
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/onboarding/github.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'Continue with Google',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

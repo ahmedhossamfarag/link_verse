@@ -28,6 +28,7 @@ Future<List<Bookmark>> algoliaSearchQuery(String query) async {
 }
 
 Future<List<Bookmark>> algoliaSearchTags(List<String> tags) async {
+  if (tags.isEmpty) return [];
   var index = Application.algolia.instance
       .index('link_verse_bookmarks').filters(tags.map((tag) => "'$tag'").join(' OR ')).setHitsPerPage(10);
   final results = await index.getObjects();
