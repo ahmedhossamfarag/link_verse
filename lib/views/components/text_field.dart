@@ -21,7 +21,7 @@ class XTextField extends StatelessWidget{
         decoration: InputDecoration(
             label: Text(placeholder),
             alignLabelWithHint: true,
-            floatingLabelStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            floatingLabelStyle: const TextStyle(color: Colors.white, backgroundColor: Colors.blue, fontSize: 20, fontWeight: FontWeight.bold),
             floatingLabelBehavior: prefixIcon != null ? FloatingLabelBehavior.never : null,
             prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
             fillColor: Colors.white,

@@ -62,7 +62,7 @@ String? descriptionValidator(String? value) {
     return 'Description must be at least 10 characters long';
   }
   if (value.length > 100) {
-    return 'Description must be less than 1000 characters';
+    return 'Description must be less than 100 characters';
   }
   return null;
 }

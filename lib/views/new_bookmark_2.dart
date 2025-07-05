@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:link_verse/control/ai.dart';
 import 'package:link_verse/control/bookmarks.dart';
 import 'package:link_verse/control/validators.dart';
 import 'package:link_verse/models/bookmark.dart';
@@ -24,13 +25,19 @@ class NewBookmark2View extends StatefulWidget {
 class _NewBookmark2ViewState extends State<NewBookmark2View> {
   Bookmark? bookmark;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _summaryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    bookmark = widget.bookmark;
     bookmark?.tags = [];
     bookmark?.imageUrls = [];
+    inspectBookmark(widget.bookmark).then((value) {
+      setState(() {
+        bookmark = widget.bookmark;
+      });
+      _summaryController.text = bookmark?.summary ?? '';
+    });
   }
 
   void _changeSummary(String value) {
@@ -64,13 +71,19 @@ class _NewBookmark2ViewState extends State<NewBookmark2View> {
   }
 
   void _exit() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksView(collection: (bookmark?.collection)!,)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            BookmarksView(collection: (bookmark?.collection)!),
+      ),
+    );
   }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final loading = showLoadingOverlay(context);
-      createBookmarkDoc(bookmark!).then((value){
+      createBookmarkDoc(bookmark!).then((value) {
         loading.remove();
         _exit();
       });
@@ -103,6 +116,8 @@ class _NewBookmark2ViewState extends State<NewBookmark2View> {
                         onChanged: _changeSummary,
                         placeholder: 'Summary',
                         maxLines: 10,
+                        validator: summaryValidator,
+                        controller: _summaryController,
                       ),
                       const SizedBox(height: 16.0),
                       Row(
@@ -128,8 +143,10 @@ class _NewBookmark2ViewState extends State<NewBookmark2View> {
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                               ),
                               Positioned(
                                 right: 0,
